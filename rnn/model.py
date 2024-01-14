@@ -10,6 +10,7 @@ from torch.autograd import Variable
 
 INITRANGE = 0.04
 
+is_cuda = torch.cuda.is_available()
 
 class DARTSCell(nn.Module):
 
@@ -31,8 +32,8 @@ class DARTSCell(nn.Module):
     T, B = inputs.size(0), inputs.size(1)
 
     if self.training:
-      x_mask = mask2d(B, inputs.size(2), keep_prob=1.-self.dropoutx)
-      h_mask = mask2d(B, hidden.size(2), keep_prob=1.-self.dropouth)
+      x_mask = mask2d(B, inputs.size(2), keep_prob=1.-self.dropoutx, cuda=is_cuda)
+      h_mask = mask2d(B, hidden.size(2), keep_prob=1.-self.dropouth, cuda=is_cuda)
     else:
       x_mask = h_mask = None
 
@@ -128,7 +129,8 @@ class RNNModel(nn.Module):
     def forward(self, input, hidden, return_h=False):
         batch_size = input.size(1)
 
-        emb = embedded_dropout(self.encoder, input, dropout=self.dropoute if self.training else 0)
+        # emb = embedded_dropout(self.encoder, input, dropout=self.dropoute if self.training else 0)
+        emb = self.encoder(input)
         emb = self.lockdrop(emb, self.dropouti)
 
         raw_output = emb

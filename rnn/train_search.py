@@ -50,7 +50,7 @@ parser.add_argument('--seed', type=int, default=3,
                     help='random seed')
 parser.add_argument('--nonmono', type=int, default=5,
                     help='random seed')
-parser.add_argument('--cuda', action='store_false',
+parser.add_argument('--cuda', action='store_false', default=False,
                     help='use CUDA')
 parser.add_argument('--log-interval', type=int, default=50, metavar='N',
                     help='report interval')
@@ -241,7 +241,7 @@ def train():
         if batch % args.log_interval == 0 and batch > 0:
             logging.info(parallel_model.genotype())
             print(F.softmax(parallel_model.weights, dim=-1))
-            cur_loss = total_loss[0] / args.log_interval
+            cur_loss = total_loss.item() / args.log_interval
             elapsed = time.time() - start_time
             logging.info('| epoch {:3d} | {:5d}/{:5d} batches | lr {:02.2f} | ms/batch {:5.2f} | '
                     'loss {:5.2f} | ppl {:8.2f}'.format(

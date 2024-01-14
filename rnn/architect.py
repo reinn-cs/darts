@@ -3,6 +3,7 @@ import numpy as np
 import torch.nn as nn
 from torch.autograd import Variable
 
+is_cuda = torch.cuda.is_available()
 
 def _concat(xs):
   return torch.cat([x.view(-1) for x in xs])
@@ -92,7 +93,11 @@ class Architect(object):
     assert offset == len(theta)
     model_dict.update(params)
     model_new.load_state_dict(model_dict)
-    return model_new.cuda()
+
+    if is_cuda:
+      return model_new.cuda()
+
+    return model_new
 
   def _hessian_vector_product(self, vector, hidden, input, target, r=1e-2):
     R = r / _concat(vector).norm()

@@ -59,7 +59,10 @@ class RNNModelSearch(RNNModel):
     def _initialize_arch_parameters(self):
       k = sum(i for i in range(1, STEPS+1))
       weights_data = torch.randn(k, len(PRIMITIVES)).mul_(1e-3)
-      self.weights = Variable(weights_data.cuda(), requires_grad=True)
+      if weights_data.is_cuda:
+        self.weights = Variable(weights_data.cuda(), requires_grad=True)
+      else:
+        self.weights = Variable(weights_data, requires_grad=True)
       self._arch_parameters = [self.weights]
       for rnn in self.rnns:
         rnn.weights = self.weights

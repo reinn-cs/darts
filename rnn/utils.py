@@ -3,11 +3,14 @@ import torch.nn as nn
 import os, shutil
 import numpy as np
 from torch.autograd import Variable
+from torch import Tensor
 
 
 def repackage_hidden(h):
     if type(h) == Variable:
         return Variable(h.data)
+    elif type(h) == Tensor:
+        return Tensor(h.data)
     else:
         return tuple(repackage_hidden(v) for v in h)
 
