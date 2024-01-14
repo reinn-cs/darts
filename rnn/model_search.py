@@ -6,6 +6,7 @@ from torch.autograd import Variable
 from collections import namedtuple
 from model import DARTSCell, RNNModel
 
+is_cuda = torch.cuda.is_available()
 
 class DARTSCellSearch(DARTSCell):
 
@@ -59,7 +60,7 @@ class RNNModelSearch(RNNModel):
     def _initialize_arch_parameters(self):
       k = sum(i for i in range(1, STEPS+1))
       weights_data = torch.randn(k, len(PRIMITIVES)).mul_(1e-3)
-      if weights_data.is_cuda:
+      if is_cuda:
         self.weights = Variable(weights_data.cuda(), requires_grad=True)
       else:
         self.weights = Variable(weights_data, requires_grad=True)
